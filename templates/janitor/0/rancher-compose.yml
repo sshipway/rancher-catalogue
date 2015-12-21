@@ -1,0 +1,19 @@
+.catalog
+  name: "Janitor"
+  version: "v1.4.0"
+  description: "Docker cleanup"
+  uuid: "janitor-00"
+  questions: 
+    - variable: "FREQUENCY"
+      label: "Frequency"
+      description: "Run the cleanup on a cycle of this many seconds"
+      default: 86400
+      required: true
+      type: "int"
+    - variable: "HOST_LABEL"
+      label: "Host label"
+      description: "Specify a Rancher host label here that will be used to determine where the Convoy GlusterFS service is deploy. This will determine what hosts can access the volumes managed by this stack."
+      default: janitor=true
+      required: true
+      type: "string"
+

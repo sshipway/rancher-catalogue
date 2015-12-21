@@ -1,0 +1,13 @@
+docker-cleanup:
+  environment:
+    CLEAN_PERIOD: ${FREQUENCY}
+    DELAY_TIME: '900'
+    KEEP_IMAGES: rancher/agent:v0.8.2,rancher/agent-instance:v0.6.0
+  labels:
+    io.rancher.scheduler.global: 'true'
+    io.rancher.scheduler.affinity:host_label_soft: ${HOST_LABEL}
+  image: meltwater/docker-cleanup:1.4.0
+  privileged: true
+  volumes:
+  - /var/run/docker.sock:/var/run/docker.sock:rw
+  - /var/lib/docker:/var/lib/docker:rw
