@@ -2,7 +2,7 @@
   name: "Janitor"
   version: "v1.4.0"
   description: "Docker cleanup"
-  uuid: "janitor-00"
+  uuid: janitor-0
   questions: 
     - variable: "FREQUENCY"
       label: "Frequency"
