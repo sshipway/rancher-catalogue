@@ -1,0 +1,75 @@
+.catalog:
+  name: "Minecraft"
+  version: "v1.8"
+  description: "Minecraft server"
+  uuid: minecraft-0
+  questions: 
+    - variable: "SCALE"
+      label: "Scale"
+      description: "How many servers to run"
+      default: 1
+      required: true
+      type: "int"
+    - variable: "PORT"
+      label: "Port number"
+      description: "On which port should the Load Balancers listen?"
+      default: 25565
+      required: true
+      type: "int"
+    - variable: "VERSION"
+      label: "Minecraft Version"
+      description: "Select the version of Minecraft server to run"
+      default: latest
+      required: true
+      type: "enum"
+      options:
+        - latest
+        - 1.7.9
+        - 1.8.8
+    - variable: "DIFFICULTY"
+      label: "Difficulty level"
+      description: "Select the Minecraft difficulty level"
+      default: normal
+      required: true
+      type: "enum"
+      options:
+        - peaceful
+        - easy
+        - normal
+        - hard
+    - variable: "MODE"
+      label: "Default game mode"
+      description: "Select the game mode to connect in"
+      default: survival
+      required: true
+      type: "enum"
+      options:
+        - survival
+        - creative
+    - variable: "PVP"
+      label: "PvP mode"
+      description: "Check here to enable PvP mode"
+      default: false
+      type: "boolean"
+    - variable: "MOTD"
+      label: "Description"
+      description: "Description string for Minecraft server"
+      default: "A Minecraft server powered by Docker"
+      type: "string"
+    - variable: "WHITELIST"
+      label: "Whitelist"
+      description: "Player names to whitelist, comma separated"
+      type: "string"
+    - variable: "OPS"
+      label: "Operators"
+      description: "Player names to give operator privileges, comma separated"
+      type: "string"
+    - variable: "SEED"
+      label: "Level seed"
+      description: "Optional level seed number for world generation"
+      type: "int"
+Minecraft:
+  scale: ${SCALE}
+MinecraftLB:
+  load_balancer_config: {}
+

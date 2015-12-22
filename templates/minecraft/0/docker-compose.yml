@@ -1,0 +1,25 @@
+Minecraft:
+  environment:
+    EULA: 'TRUE'
+    VERSION: ${VERSION}
+    DIFFICULTY: ${DIFFICULTY}
+    WHITELIST: ${WHITELIST}
+    OPS: ${OPS}
+    SEED: ${SEED}
+    MODE: ${MODE}
+    MOTD: ${MOTD}
+    PVP: ${PVP}
+  tty: true
+  image: itzg/minecraft-server
+  stdin_open: true
+MinecraftLB:
+  ports:
+  - ${PORT}:25565/tcp
+  labels:
+    io.rancher.scheduler.global: 'true'
+  tty: true
+  image: rancher/load-balancer-service
+  links:
+  - Minecraft:Minecraft
+  stdin_open: true
+
