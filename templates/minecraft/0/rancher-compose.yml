@@ -25,7 +25,7 @@
       type: "int"
     - variable: "VERSION"
       label: "Minecraft Version"
-      description: "Select the version of Minecraft server to run"
+      description: "Select the version of Minecraft server to run.  Default is the latest available"
       required: false
       type: "enum"
       options:
@@ -34,7 +34,7 @@
         - 1.6.4
     - variable: "DIFFICULTY"
       label: "Difficulty level"
-      description: "Select the Minecraft difficulty level"
+      description: "Select the Minecraft difficulty level.  Default is normal"
       default: normal
       required: true
       type: "enum"
@@ -45,7 +45,7 @@
         - hard
     - variable: "MODE"
       label: "Default game mode"
-      description: "Select the game mode to connect in"
+      description: "Select the game mode to connect in.  Default is survival"
       default: survival
       required: true
       type: "enum"
@@ -55,7 +55,7 @@
     - variable: "PVP"
       label: "PvP mode"
       description: "Check here to enable PvP mode"
-      default: False
+      default: false
       type: "boolean"
       required: true
     - variable: "MOTD"
