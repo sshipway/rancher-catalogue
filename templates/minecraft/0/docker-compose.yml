@@ -17,6 +17,7 @@ MinecraftLB:
   - ${PORT}:25565/tcp
   labels:
     io.rancher.scheduler.global: 'true'
+    io.rancher.scheduler.affinity:host_label: lb=1
   tty: true
   image: rancher/load-balancer-service
   links:

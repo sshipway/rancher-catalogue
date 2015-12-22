@@ -12,20 +12,19 @@
       type: "int"
     - variable: "PORT"
       label: "Port number"
-      description: "On which port should the Load Balancers listen?"
+      description: "On which port should the Load Balancer listen?"
       default: 25565
       required: true
       type: "int"
     - variable: "VERSION"
       label: "Minecraft Version"
       description: "Select the version of Minecraft server to run"
-      default: latest
-      required: true
+      required: false
       type: "enum"
       options:
-        - latest
-        - 1.7.9
-        - 1.8.8
+        - 1.8.9
+        - 1.7.10
+        - 1.6.4
     - variable: "DIFFICULTY"
       label: "Difficulty level"
       description: "Select the Minecraft difficulty level"
@@ -49,13 +48,15 @@
     - variable: "PVP"
       label: "PvP mode"
       description: "Check here to enable PvP mode"
-      default: false
+      default: False
       type: "boolean"
+      required: true
     - variable: "MOTD"
       label: "Description"
       description: "Description string for Minecraft server"
       default: "A Minecraft server powered by Docker"
       type: "string"
+      required: true
     - variable: "WHITELIST"
       label: "Whitelist"
       description: "Player names to whitelist, comma separated"

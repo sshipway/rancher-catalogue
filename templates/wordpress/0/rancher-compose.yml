@@ -1,0 +1,30 @@
+.catalog:
+  name: "Wordpress"
+  version: "v1.0"
+  description: "Wordpress server"
+  uuid: wordpress-0
+  questions: 
+    - variable: "SCALE"
+      label: "Scale"
+      description: "How many servers to run"
+      default: 2
+      required: true
+      type: "int"
+    - variable: "PORT"
+      label: "Port"
+      description: "Which TCP port the load balancer should listen on"
+      default: 8080
+      required: true
+      type: "int"
+    - variable: "PASSWORD"
+      label: "Password"
+      description: "Root password for Wordpress database"
+      required: true
+      type: "string"
+db:
+  scale: 1
+balancer:
+  load_balancer_config: {}
+wordpress:
+  scale: ${SCALE}
+
