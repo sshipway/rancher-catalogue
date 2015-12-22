@@ -4,6 +4,13 @@
   description: "Minecraft server"
   uuid: minecraft-0
   questions: 
+    - variable: "EULA"
+      label: "Accept EULA"
+      description: "Select TRUE to accept the Minecraft EULA"
+      required: true
+      type: "enum"
+      options:
+        - TRUE
     - variable: "SCALE"
       label: "Scale"
       description: "How many servers to run"

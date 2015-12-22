@@ -1,6 +1,6 @@
 Minecraft:
   environment:
-    EULA: 'TRUE'
+    EULA: ${EULA}
     VERSION: ${VERSION}
     DIFFICULTY: ${DIFFICULTY}
     WHITELIST: ${WHITELIST}
