@@ -1,4 +1,4 @@
-.catalog
+.catalog:
   name: "Janitor"
   version: "v1.4.0"
   description: "Docker cleanup"
