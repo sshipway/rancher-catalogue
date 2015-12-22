@@ -11,7 +11,7 @@ no hosts match this, then you will get no load balancers!
 
 ### Options
 
-You **must** accept the EULA by selecting **TRUE** in the dropdown.
+You **must** accept the [EULA](https://account.mojang.com/documents/minecraft_eula) by selecting **TRUE** in the dropdown.
 
 You should specify a unique port number for the load balancers to listen on.
 
