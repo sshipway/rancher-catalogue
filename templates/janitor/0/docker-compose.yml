@@ -1,5 +1,4 @@
-janitor:
-  container_name: janitor
+cleanup:
   image: meltwater/docker-cleanup:1.4.0
   environment:
     CLEAN_PERIOD: ${FREQUENCY}
