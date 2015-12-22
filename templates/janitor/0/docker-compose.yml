@@ -7,7 +7,7 @@ janitor:
     KEEP_IMAGES: "rancher/agent:v0.8.2,rancher/agent-instance:v0.6.0"
   labels:
      io.rancher.scheduler.global: "true"
-     io.rancher.scheduler.affinity:host_label_soft: ${HOST_LABEL}
+     io.rancher.scheduler.affinity:host_label_ne: ${EXCLUDE_LABEL}
   privileged: true
   tty: true
   stdin_open: true

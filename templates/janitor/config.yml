@@ -1,5 +1,5 @@
 name: Janitor
 description: |
-  Automatic cleanup of unused images on hosts
+  Automatic cleanup of unused images on hosts, in order to save disk space.
 version: v0
 category: monitoring

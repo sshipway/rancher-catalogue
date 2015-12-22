@@ -10,10 +10,10 @@
       default: 86400
       required: true
       type: "int"
-    - variable: "HOST_LABEL"
-      label: "Host label"
-      description: "Specify a Rancher host label here that will be used to determine where the Convoy GlusterFS service is deploy. This will determine what hosts can access the volumes managed by this stack."
-      default: janitor=true
+    - variable: "EXCLUDE_LABEL"
+      label: "Exclude label"
+      description: "Specify a Rancher host label here that will be used to determine on which hosts the container should not deploy."
+      default: janitor.exclude=true
       required: true
       type: "string"
 
