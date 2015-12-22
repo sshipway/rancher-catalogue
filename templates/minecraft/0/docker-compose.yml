@@ -3,12 +3,13 @@ Minecraft:
     EULA: ${EULA}
     VERSION: ${VERSION}
     DIFFICULTY: ${DIFFICULTY}
+    MODE: ${MODE}
+    PVP: ${PVP}
     WHITELIST: ${WHITELIST}
     OPS: ${OPS}
-    SEED: ${SEED}
-    MODE: ${MODE}
     MOTD: ${MOTD}
-    PVP: ${PVP}
+    SEED: ${SEED}
+    WORLD: ${WORLD}
   tty: true
   image: itzg/minecraft-server
   stdin_open: true

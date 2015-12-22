@@ -28,8 +28,10 @@
       description: "Select the version of Minecraft server to run.  Default is the latest available"
       required: false
       type: "enum"
-      default: 1.8.9
+      default: LATEST
       options:
+        - LATEST
+        - SNAPSHOT
         - 1.8.9
         - 1.7.10
         - 1.6.4
@@ -53,9 +55,12 @@
       options:
         - survival
         - creative
+        - adventure
+        - spectator
+        - 2
     - variable: "PVP"
       label: "PvP mode"
-      description: "Check here to enable PvP mode"
+      description: "Check here to enable PvP mode.  Default is no PvP."
       default: false
       type: "boolean"
       required: true
@@ -77,6 +82,10 @@
       label: "Level seed"
       description: "Optional level seed number for world generation"
       type: "int"
+    - variable: "WORLD"
+      label: "World URL"
+      description: "URL to download zipped world directory (NOT YET ENABLED)"
+      type: "string"
 Minecraft:
   scale: ${SCALE}
 MinecraftLB:
