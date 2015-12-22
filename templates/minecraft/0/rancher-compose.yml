@@ -28,6 +28,7 @@
       description: "Select the version of Minecraft server to run.  Default is the latest available"
       required: false
       type: "enum"
+      default: 1.8.9
       options:
         - 1.8.9
         - 1.7.10
