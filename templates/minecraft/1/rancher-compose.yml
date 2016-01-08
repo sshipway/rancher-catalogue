@@ -67,7 +67,7 @@
     - variable: "MOTD"
       label: "Description"
       description: "Description string for Minecraft server"
-      default: "A Minecraft server powered by Docker"
+      default: "A Minecraft server powered by Rancher"
       type: "string"
       required: true
     - variable: "WHITELIST"
