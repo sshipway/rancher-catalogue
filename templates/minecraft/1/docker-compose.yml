@@ -11,7 +11,7 @@ Minecraft:
     SEED: ${SEED}
     WORLD: ${WORLD}
   tty: true
-  image: itzg/minecraft-server:1.8_01
+  image: itzg/minecraft-server
   stdin_open: true
 MinecraftLB:
   ports:
