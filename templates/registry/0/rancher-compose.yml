@@ -18,13 +18,13 @@
       type: "int"
     - variable: "DBPASSWORD"
       label: "DB Password"
-      description: "Password for database access, must be 8 characters or longer"
+      description: "Password for Portus database access, must be 8 characters or longer"
       required: true
       default: password
       type: "string"
     - variable: "ROOTPASSWORD"
       label: "DB Root Password"
-      description: "Root Password for database, must be 8 characters or longer"
+      description: "Root Password for MySQL database, must be 8 characters or longer.  This is not normally used."
       required: true
       default: password
       type: "string"
@@ -55,7 +55,7 @@
       description: "The port number on the LDAP server (if LDAP authentication is being used)"
       required: false
       default: 389
-      type: "integer"
+      type: "int"
     - variable: "LDAPTLS"
       label: "LDAP TLS"
       description: "The TLS option for the LDAP server (if LDAP authentication is being used)"
