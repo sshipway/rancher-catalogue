@@ -17,10 +17,8 @@ ssl-proxy:
           proxy_set_header Host ${DOMAIN};\n
           proxy_set_header X-Forwarded-Proto https;\n
           proxy_set_header X-Forwarded-Host ${DOMAIN}:${PPORT};\n
-          proxy_set_header X-Forwarded-For $$proxy_add_x_forwarded_for;\n
           proxy_pass http://portus:3000/;\n
           proxy_http_version 1.1;\n
-          proxy_set_header Upgrade $$http_upgrade;\n
           proxy_set_header Connection "upgrade";\n
           proxy_read_timeout 900s;\n
         }\n
@@ -102,4 +100,20 @@ registry:
   volumes:
     - ${DIR}/certs:/certs
     - ${DIR}/data:/var/lib/registry
+
+lb:
+  ports:
+  - ${RPORT}:5000/tcp
+  - ${PPORT}:443/tcp
+  labels:
+    io.rancher.loadbalancer.target.ssl-proxy: ${PPORT}=443
+    io.rancher.loadbalancer.target.registry: ${RPORT}=5000
+    io.rancher.scheduler.global: 'true'
+    io.rancher.scheduler.affinity:host_label: lb=1
+  tty: true
+  image: rancher/load-balancer-service
+  links:
+  - registry:registry
+  - ssl-proxy:ssl-proxy
+  stdin_open: true
 
