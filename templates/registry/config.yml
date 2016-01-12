@@ -1,0 +1,6 @@
+name: Registry
+description: |
+  Docker registry.  No SSL, local user accounts
+version: v2.1.0
+category: Applications
+

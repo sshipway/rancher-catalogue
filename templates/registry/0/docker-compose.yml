@@ -1,0 +1,105 @@
+# Start proxy first as this makes certificates if necessary
+ssl-proxy:
+  image: sshipway/nginx:1.9.9
+  tty: true
+  stdin_open: true
+  ports:
+    - ${PPORT}:443/tcp
+  links:
+    - portus:portus
+  environment: 
+    NGINX_CONFIG: >
+      server {\n
+        listen 443 ssl;\n
+        ssl_certificate     certs/registry.crt;\n
+        ssl_certificate_key certs/registry.key;\n
+        location / {\n
+          proxy_set_header Host $host;\n
+          proxy_set_header X-Forwarded-Proto $scheme;\n
+          proxy_set_header X-Forwarded-Host $http_host;\n
+          proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;\n
+          proxy_pass http://portus:3000/;\n
+          proxy_http_version 1.1;\n
+          proxy_set_header Upgrade $http_upgrade;\n
+          proxy_set_header Connection "upgrade";\n
+          proxy_read_timeout 900s;\n
+        }\n
+      }\n
+    NGINX_CERT_FILE: /etc/nginx/certs/registry.crt
+    NGINX_KEY_FILE: /etc/nginx/certs/registry.key
+    NGINX_DOMAIN: ${DOMAIN}
+  volumes:
+    - ${DIR}/certs:/etc/nginx/certs
+
+portus-db:
+  image: mysql:5.7.10
+  environment:
+    MYSQL_DATABASE: portus
+    MYSQL_ROOT_PASSWORD: ${ROOTPASSWORD}
+    MYSQL_USER: portus
+    MYSQL_PASSWORD: ${DBPASSWORD}
+  tty: true
+  stdin_open: true
+  volumes:
+    - ${DIR}/db:/var/lib/mysql
+
+portus:
+  image: sshipway/portus:1.1
+  environment: 
+    PORTUS_MACHINE_FQDN: ${DOMAIN}
+    PORTUS_PRODUCTION_HOST: portus-db
+    PORTUS_PRODUCTION_DATABASE: portus
+    PORTUS_PRODUCTION_USERNAME: portus
+    PORTUS_PRODUCTION_PASSWORD: ${DBPASSWORD}
+    PORTUS_GRAVATAR_ENABLED: true
+    PORTUS_KEY_PATH: /certs/registry.key
+    PORTUS_PASSWORD: ${DBPASSWORD}
+    PORTUS_SECRET_KEY_BASE: ${ROOTPASSWORD}
+    PORTUS_CHECK_SSL_USAGE_ENABLED: true
+    PORTUS_SMTP_ENABLED: false
+    PORTUS_LDAP_ENABLED: ${LDAP}
+    PORTUS_LDAP_HOSTNAME: ${LDAPHOST}
+    PORTUS_LDAP_PORT: ${LDAPPORT}
+    PORTUS_LDAP_METHOD: ${LDAPTLS}
+    PORTUS_LDAP_BASE: ${LDAPBASE}
+    PORTUS_LDAP_UID: cn
+    PORTUS_LDAP_AUTHENTICATION_ENABLED: ${LDAPBIND}
+    PORTUS_LDAP_AUTHENTICATION_BIND_DN: ${LDAPBINDDN}
+    PORTUS_LDAP_AUTHENTICATION_PASSWORD: ${LDAPBINDPASS}
+    PORTUS_LDAP_GUESS_EMAIL_ENABLED: true
+    PORTUS_LDAP_GUESS_EMAIL_ATTR: mail
+
+    REGISTRY_SSL_ENABLED: true
+    REGISTRY_HOSTNAME: ${DOMAIN}
+    REGISTRY_PORT: ${RPORT}
+    REGISTRY_NAME: Registry
+  tty: true
+  stdin_open: true
+  volumes:
+    - ${DIR}/certs:/certs
+  links:
+    - portus-db:portus-db
+    - registry:registry
+
+registry:
+  image: registry:2.1
+  environment:
+    REGISTRY_LOG_LEVEL: warn
+    REGISTRY_STORAGE_DELETE_ENABLED: true
+    REGISTRY_AUTH_TOKEN_REALM: https://${DOMAIN}:${PPORT}/v2/token
+    REGISTRY_AUTH_TOKEN_SERVICE: ${DOMAIN}:${RPORT}
+    REGISTRY_AUTH_TOKEN_ISSUER: ${DOMAIN}
+    REGISTRY_AUTH_TOKEN_ROOTCERTBUNDLE: /certs/registry.crt
+    REGISTRY_NOTIFICATIONS_ENDPOINTS_NAME: portus
+    REGISTRY_NOTIFICATIONS_ENDPOINTS_URL: https://${DOMAIN}:${PPORT}/v2/webhooks/events
+    REGISTRY_NOTIFICATIONS_ENDPOINTS_TIMEOUT: 500
+    REGISTRY_NOTIFICATIONS_ENDPOINTS_THRESHOLD: 5
+    REGISTRY_NOTIFICATIONS_ENDPOINTS_BACKOFF: 1
+    REGISTRY_HTTP_TLS_CERTIFICATE: /certs/registry.crt
+    REGISTRY_HTTP_TLS_KEY: /certs/registry.key
+  tty: true
+  stdin_open: true
+  volumes:
+    - ${DIR}/certs:/certs
+    - ${DIR}/data:/var/lib/registry
+
