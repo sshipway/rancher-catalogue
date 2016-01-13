@@ -74,7 +74,7 @@
       type: "string"
     - variable: "LDAPBIND"
       label: "LDAP Bind enabled"
-      description: "SHould an authenticated Bind be used to access LDAP (if LDAP authentication is being used)"
+      description: "Should an authenticated Bind be used to access LDAP (if LDAP authentication is being used)"
       required: false
       default: false
       type: "boolean"
