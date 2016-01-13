@@ -90,4 +90,10 @@
       required: false
       default: "password"
       type: "string"
+    - variable: "LABEL"
+      label: "LB Scheduling Rule"
+      description: "The scheduling rule for where to run the Load Balancer.  The Registry and Web UI will be available on Hosts which match this Label test."
+      required: true
+      default: "lb=1"
+      type: "string"
 

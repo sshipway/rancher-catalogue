@@ -3,8 +3,6 @@ ssl-proxy:
   image: sshipway/nginx:1.9.9
   tty: true
   stdin_open: true
-  ports:
-    - ${PPORT}:443/tcp
   links:
     - portus:portus
   environment: 
@@ -109,7 +107,7 @@ lb:
     io.rancher.loadbalancer.target.ssl-proxy: ${PPORT}=443
     io.rancher.loadbalancer.target.registry: ${RPORT}=5000
     io.rancher.scheduler.global: 'true'
-    io.rancher.scheduler.affinity:host_label: lb=1
+    io.rancher.scheduler.affinity:host_label: ${LABEL}
   tty: true
   image: rancher/load-balancer-service
   links:
