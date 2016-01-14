@@ -40,7 +40,7 @@ portus-db:
     - ${DIR}/db:/var/lib/mysql
 
 portus:
-  image: sshipway/portus:2.0.0
+  image: sshipway/portus:2.0.1
   environment: 
     PORTUS_MACHINE_FQDN: ${DOMAIN}
     PORTUS_PRODUCTION_HOST: portus-db
