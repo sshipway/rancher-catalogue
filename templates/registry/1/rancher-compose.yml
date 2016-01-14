@@ -1,0 +1,99 @@
+.catalog:
+  name: "Registry"
+  version: "v2.1.0-1.1"
+  description: "Docker Registry"
+  uuid: registry-1
+  questions: 
+    - variable: "RPORT"
+      label: "Registry Port"
+      description: "Port on which to run the registry service"
+      default: 5000
+      required: true
+      type: "int"
+    - variable: "PPORT"
+      label: "Admin Port"
+      description: "Port on which to run the SSL Portus administration service and API"
+      default: 443
+      required: true
+      type: "int"
+    - variable: "DBPASSWORD"
+      label: "DB Password"
+      description: "Password for Portus database access, must be 8 characters or longer"
+      required: true
+      default: password
+      type: "string"
+    - variable: "ROOTPASSWORD"
+      label: "DB Root Password"
+      description: "Root Password for MySQL database, must be 8 characters or longer.  This is not normally used."
+      required: true
+      default: password
+      type: "string"
+    - variable: "DIR"
+      label: "Storage directory"
+      description: "Path of shared storage to use for registry, database, and certificates.  This should be available on all hosts"
+      required: true
+      type: "string"
+    - variable: "DOMAIN"
+      label: "FQDN"
+      description: "FQDN of server.  This should be the CN in the certificates and will be the URL to contact the Registry and Web interface"
+      required: true
+      type: "string"
+    - variable: "LDAP"
+      label: "LDAP Enabled"
+      description: "Enable LDAP authentication"
+      required: true
+      default: false
+      type: "boolean"
+    - variable: "LDAPHOST"
+      label: "LDAP Server"
+      description: "The FQDN of the LDAP server (if LDAP authentication is being used)"
+      required: false
+      default: "ldap.company.com"
+      type: "string"
+    - variable: "LDAPPORT"
+      label: "LDAP Server port"
+      description: "The port number on the LDAP server (if LDAP authentication is being used)"
+      required: false
+      default: 389
+      type: "int"
+    - variable: "LDAPTLS"
+      label: "LDAP TLS"
+      description: "The TLS option for the LDAP server (if LDAP authentication is being used)"
+      required: false
+      default: "starttls"
+      type: "enum"
+      options:
+        - starttls
+        - simple_tls
+        - plain
+    - variable: "LDAPBASE"
+      label: "LDAP Base DN"
+      description: "The Base DN for User lookups on the LDAP server (if LDAP authentication is being used)"
+      required: false
+      default: "ou=People,dc=company,dc=com"
+      type: "string"
+    - variable: "LDAPBIND"
+      label: "LDAP Bind enabled"
+      description: "Should an authenticated Bind be used to access LDAP (if LDAP authentication is being used)"
+      required: false
+      default: false
+      type: "boolean"
+    - variable: "LDAPBINDDN"
+      label: "LDAP Bind DN"
+      description: "The DN to use for binding to the LDAP server (if LDAP authentication is being used with Bind enabled)"
+      required: false
+      default: "ou=portus,dc=company,dc=com"
+      type: "string"
+    - variable: "LDAPBINDPASS"
+      label: "LDAP Bind Password"
+      description: "The password to use for binding to the LDAP server (if LDAP authentication is being used with Bind enabled)"
+      required: false
+      default: "password"
+      type: "string"
+    - variable: "LABEL"
+      label: "LB Scheduling Rule"
+      description: "The scheduling rule for where to run the Load Balancer.  The Registry and Web UI will be available on Hosts which match this Label test."
+      required: true
+      default: "lb=1"
+      type: "string"
+
