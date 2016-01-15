@@ -1,0 +1,34 @@
+.catalog:
+  name: "MariaDB"
+  version: "v5.5.47-1.0"
+  description: "MariaDB database server"
+  uuid: mariadb-0
+  questions: 
+    - variable: "PORT"
+      label: "Port number"
+      description: "On which port should the database listen?"
+      default: 25565
+      required: true
+      type: "int"
+    - variable: "ROOTPASS"
+      label: "Root Password"
+      description: "Root password for the new server"
+      required: true
+      default: "password"
+      type: "string"
+    - variable: "DB"
+      label: "Database"
+      description: "Database to create"
+      required: false
+      type: "string"
+    - variable: "USER"
+      label: "Username"
+      description: "User to create.  This user will be given admin rights to the created database."
+      required: false
+      type: "string"
+    - variable: "PASS"
+      label: "Password"
+      description: "Password for user"
+      required: false
+      type: "string"
+

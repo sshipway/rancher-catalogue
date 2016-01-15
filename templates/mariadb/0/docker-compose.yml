@@ -1,0 +1,13 @@
+MariaDB:
+  environment:
+    MYSQL_ROOT_PASSWORD: ${ROOTPASS}
+    MYSQL_DATABASE: ${DB}
+    MYSQL_USER: ${USER}
+    MYSQL_PASS: ${PASS}
+    MYSQL_ALLOW_EMPTY_PASSWORD: no
+  tty: true
+  image: mariadb:5.5.47
+  stdin_open: true
+  volumes:
+    - /var/lib/mysql
+
