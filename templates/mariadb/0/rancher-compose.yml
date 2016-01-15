@@ -1,13 +1,13 @@
 .catalog:
   name: "MariaDB"
-  version: "v5.5.47-1.0"
+  version: "v5.5.47-1.1"
   description: "MariaDB database server"
   uuid: mariadb-0
   questions: 
     - variable: "PORT"
       label: "Port number"
       description: "On which port should the database listen?"
-      default: 25565
+      default: 3306
       required: true
       type: "int"
     - variable: "ROOTPASS"
