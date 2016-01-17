@@ -10,13 +10,17 @@ MariaDB:
   stdin_open: true
   volumes:
     - /var/lib/mysql
+  ports:
+    - ${PORT}:3306
+
 phpmyadmin:
   environment:
     MYSQL_ROOT_PASSWORD: ${ROOTPASS}
   tty: true
   image: nazarpc/phpmyadmin
   links:
-  - mysql:MariaDB
+  - MariaDB:mysql
   stdin_open: true
   ports:
   - ${ADMINPORT}:80
+
