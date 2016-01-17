@@ -1,0 +1,139 @@
+# Start proxy first as this makes certificates if necessary
+ssl-proxy:
+  image: nginx:1.9.9
+  tty: true
+  stdin_open: true
+  links:
+    - portus:portus
+  labels:
+    io.rancher.sidekicks: configmaker
+  volumes:
+    - /conf:/etc/nginx/conf.d
+    - /certs:/etc/nginx/certs
+  volumes_from:
+    - configmaker
+
+configmaker:
+  image: sshipway/load-config
+  tty: true
+  stdin_open: true
+  environment: 
+    CFG_CONFIG: >
+      server {\n
+        listen 443 ssl;\n
+        ssl_certificate     certs/registry.crt;\n
+        ssl_certificate_key certs/registry.key;\n
+        location / {\n
+          proxy_set_header Host ${DOMAIN};\n
+          proxy_set_header X-Forwarded-Proto https;\n
+          proxy_set_header X-Forwarded-Host ${DOMAIN}:${PPORT};\n
+          proxy_pass http://portus:3000/;\n
+          proxy_http_version 1.1;\n
+          proxy_set_header Connection "upgrade";\n
+          proxy_read_timeout 900s;\n
+        }\n
+      }\n
+    CFG_CERT_FILE: /etc/nginx/certs/registry.crt
+    CFG_KEY_FILE: /etc/nginx/certs/registry.key
+    CFG_DOMAIN: ${DOMAIN}
+  labels:
+    io.rancher.container.start_once: 'true'
+  volumes:
+    - ${DIR}/certs:/certs
+
+portus-db:
+  image: mysql:5.7.10
+  environment:
+    MYSQL_DATABASE: portus
+    MYSQL_ROOT_PASSWORD: ${ROOTPASSWORD}
+    MYSQL_USER: portus
+    MYSQL_PASSWORD: ${DBPASSWORD}
+  tty: true
+  stdin_open: true
+  volumes:
+    - ${DIR}/db:/var/lib/mysql
+
+portus:
+  image: sshipway/portus:2.0.1
+  environment: 
+    PORTUS_MACHINE_FQDN: ${DOMAIN}
+    PORTUS_PRODUCTION_HOST: portus-db
+    PORTUS_PRODUCTION_DATABASE: portus
+    PORTUS_PRODUCTION_USERNAME: portus
+    PORTUS_PRODUCTION_PASSWORD: ${DBPASSWORD}
+    PORTUS_GRAVATAR_ENABLED: true
+    PORTUS_KEY_PATH: /certs/registry.key
+    PORTUS_PASSWORD: ${DBPASSWORD}
+    PORTUS_SECRET_KEY_BASE: ${ROOTPASSWORD}
+    PORTUS_CHECK_SSL_USAGE_ENABLED: true
+    PORTUS_SMTP_ENABLED: false
+    PORTUS_LDAP_ENABLED: ${LDAP}
+    PORTUS_LDAP_HOSTNAME: ${LDAPHOST}
+    PORTUS_LDAP_PORT: ${LDAPPORT}
+    PORTUS_LDAP_METHOD: ${LDAPTLS}
+    PORTUS_LDAP_BASE: ${LDAPBASE}
+    PORTUS_LDAP_UID: cn
+    PORTUS_LDAP_AUTHENTICATION_ENABLED: ${LDAPBIND}
+    PORTUS_LDAP_AUTHENTICATION_BIND_DN: ${LDAPBINDDN}
+    PORTUS_LDAP_AUTHENTICATION_PASSWORD: ${LDAPBINDPASS}
+    PORTUS_LDAP_GUESS_EMAIL_ENABLED: true
+    PORTUS_LDAP_GUESS_EMAIL_ATTR: mail
+
+    REGISTRY_SSL_ENABLED: true
+    REGISTRY_HOSTNAME: ${DOMAIN}
+    REGISTRY_PORT: ${RPORT}
+    REGISTRY_NAME: Registry
+  tty: true
+  stdin_open: true
+  volumes:
+    - ${DIR}/certs:/certs
+  links:
+    - portus-db:portus-db
+
+registry:
+  image: registry:2.1
+  environment:
+    REGISTRY_LOG_LEVEL: warn
+    REGISTRY_STORAGE_DELETE_ENABLED: true
+    REGISTRY_AUTH_TOKEN_REALM: https://${DOMAIN}:${PPORT}/v2/token
+    REGISTRY_AUTH_TOKEN_SERVICE: ${DOMAIN}:${RPORT}
+    REGISTRY_AUTH_TOKEN_ISSUER: ${DOMAIN}
+    REGISTRY_AUTH_TOKEN_ROOTCERTBUNDLE: /certs/registry.crt
+    REGISTRY_NOTIFICATIONS_ENDPOINTS_NAME: portus
+    REGISTRY_NOTIFICATIONS_ENDPOINTS_URL: https://${DOMAIN}:${PPORT}/v2/webhooks/events
+    REGISTRY_NOTIFICATIONS_ENDPOINTS_TIMEOUT: 500
+    REGISTRY_NOTIFICATIONS_ENDPOINTS_THRESHOLD: 5
+    REGISTRY_NOTIFICATIONS_ENDPOINTS_BACKOFF: 1
+    REGISTRY_HTTP_TLS_CERTIFICATE: /certs/registry.crt
+    REGISTRY_HTTP_TLS_KEY: /certs/registry.key
+    REGISTRY_HTTP_SECRET: httpsecret
+    REGISTRY_NOTIFICATIONS_ENDPOINTS: >
+      - name: portus
+        url: https://${DOMAIN}:${PPORT}/v2/webhooks/events
+        timeout: 500
+        threshold: 5
+        backoff: 1
+  tty: true
+  stdin_open: true
+  volumes:
+    - ${DIR}/certs:/certs
+    - ${DIR}/data:/var/lib/registry
+  links:
+    - portus:portus
+
+lb:
+  ports:
+  - ${RPORT}:5000/tcp
+  - ${PPORT}:443/tcp
+  labels:
+    io.rancher.loadbalancer.target.ssl-proxy: ${PPORT}=443
+    io.rancher.loadbalancer.target.registry: ${RPORT}=5000
+    io.rancher.scheduler.global: 'true'
+    io.rancher.scheduler.affinity:host_label: ${LABEL}
+  tty: true
+  image: rancher/load-balancer-service
+  links:
+  - registry:registry
+  - ssl-proxy:ssl-proxy
+  stdin_open: true
+
