@@ -10,10 +10,8 @@ MariaDB:
   stdin_open: true
   volumes:
     - /var/lib/mysql
-  ports:
-    - ${PORT}:3306
 
-phpmyadmin:
+phpMyAdmin:
   environment:
     MYSQL_ROOT_PASSWORD: ${ROOTPASS}
   tty: true
@@ -21,6 +19,18 @@ phpmyadmin:
   links:
   - MariaDB:mysql
   stdin_open: true
+
+LoadBalancer:
   ports:
+  - ${PORT}:3306/tcp
   - ${ADMINPORT}:80
+  labels:
+    io.rancher.loadbalancer.target.mysql: ${PORT}=3306
+    io.rancher.loadbalancer.target.phpmyadmin: ${ADMINPORT}=80
+  tty: true
+  image: rancher/load-balancer-service
+  links:
+  - phpMyAdmin:phpmyadmin
+  - MariaDB:mysql
+  stdin_open: true
 
