@@ -10,4 +10,5 @@ MariaDB:
   stdin_open: true
   volumes:
     - /var/lib/mysql
-
+  ports:
+    - ${PORT}:3306
