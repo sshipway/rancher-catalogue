@@ -78,8 +78,6 @@ registry:
   links:
     - portus:portus
 
-# ssl proxy config file is genertaed by portus container
-# and then exported as a volume
 ssl-proxy:
   image: nginx:1.9.9
   tty: true
