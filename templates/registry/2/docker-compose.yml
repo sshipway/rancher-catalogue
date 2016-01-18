@@ -1,47 +1,4 @@
-# Start proxy first as this makes certificates if necessary
-ssl-proxy:
-  image: nginx:1.9.9
-  tty: true
-  stdin_open: true
-  links:
-    - portus:portus
-  labels:
-    io.rancher.sidekicks: configmaker
-  volumes:
-    - /conf:/etc/nginx/conf.d
-    - /certs:/etc/nginx/certs
-  volumes_from:
-    - configmaker
-
-configmaker:
-  image: sshipway/load-config
-  tty: true
-  stdin_open: true
-  environment: 
-    CFG_CONFIG: >
-      server {\n
-        listen 443 ssl;\n
-        ssl_certificate     certs/registry.crt;\n
-        ssl_certificate_key certs/registry.key;\n
-        location / {\n
-          proxy_set_header Host ${DOMAIN};\n
-          proxy_set_header X-Forwarded-Proto https;\n
-          proxy_set_header X-Forwarded-Host ${DOMAIN}:${PPORT};\n
-          proxy_pass http://portus:3000/;\n
-          proxy_http_version 1.1;\n
-          proxy_set_header Connection "upgrade";\n
-          proxy_read_timeout 900s;\n
-        }\n
-      }\n
-    CFG_CERT_FILE: /etc/nginx/certs/registry.crt
-    CFG_KEY_FILE: /etc/nginx/certs/registry.key
-    CFG_DOMAIN: ${DOMAIN}
-  labels:
-    io.rancher.container.start_once: 'true'
-  volumes:
-    - ${DIR}/certs:/certs
-
-portus-db:
+db:
   image: mysql:5.7.10
   environment:
     MYSQL_DATABASE: portus
@@ -54,10 +11,10 @@ portus-db:
     - ${DIR}/db:/var/lib/mysql
 
 portus:
-  image: sshipway/portus:2.0.1
+  image: sshipway/portus:2.0.2
   environment: 
     PORTUS_MACHINE_FQDN: ${DOMAIN}
-    PORTUS_PRODUCTION_HOST: portus-db
+    PORTUS_PRODUCTION_HOST: db
     PORTUS_PRODUCTION_DATABASE: portus
     PORTUS_PRODUCTION_USERNAME: portus
     PORTUS_PRODUCTION_PASSWORD: ${DBPASSWORD}
@@ -78,7 +35,7 @@ portus:
     PORTUS_LDAP_AUTHENTICATION_PASSWORD: ${LDAPBINDPASS}
     PORTUS_LDAP_GUESS_EMAIL_ENABLED: true
     PORTUS_LDAP_GUESS_EMAIL_ATTR: mail
-
+    PORTUS_PORT: ${PPORT}
     REGISTRY_SSL_ENABLED: true
     REGISTRY_HOSTNAME: ${DOMAIN}
     REGISTRY_PORT: ${RPORT}
@@ -88,7 +45,7 @@ portus:
   volumes:
     - ${DIR}/certs:/certs
   links:
-    - portus-db:portus-db
+    - db:db
 
 registry:
   image: registry:2.1
@@ -109,17 +66,30 @@ registry:
     REGISTRY_HTTP_SECRET: httpsecret
     REGISTRY_NOTIFICATIONS_ENDPOINTS: >
       - name: portus
-        url: https://${DOMAIN}:${PPORT}/v2/webhooks/events
+        url: http://portus:3000/v2/webhooks/events
         timeout: 500
         threshold: 5
         backoff: 1
   tty: true
   stdin_open: true
   volumes:
-    - ${DIR}/certs:/certs
+    - ${DIR}/certs:/certs:ro
     - ${DIR}/data:/var/lib/registry
   links:
     - portus:portus
+
+# ssl proxy config file is genertaed by portus container
+# and then exported as a volume
+ssl-proxy:
+  image: nginx:1.9.9
+  tty: true
+  stdin_open: true
+  links:
+    - portus:portus
+  volumes:
+    - ${DIR}/certs:/etc/nginx/certs:ro
+  volumes_from:
+    - portus
 
 lb:
   ports:
