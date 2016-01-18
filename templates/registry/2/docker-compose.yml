@@ -56,11 +56,6 @@ registry:
     REGISTRY_AUTH_TOKEN_SERVICE: ${DOMAIN}:${RPORT}
     REGISTRY_AUTH_TOKEN_ISSUER: ${DOMAIN}
     REGISTRY_AUTH_TOKEN_ROOTCERTBUNDLE: /certs/registry.crt
-    REGISTRY_NOTIFICATIONS_ENDPOINTS_NAME: portus
-    REGISTRY_NOTIFICATIONS_ENDPOINTS_URL: https://${DOMAIN}:${PPORT}/v2/webhooks/events
-    REGISTRY_NOTIFICATIONS_ENDPOINTS_TIMEOUT: 500
-    REGISTRY_NOTIFICATIONS_ENDPOINTS_THRESHOLD: 5
-    REGISTRY_NOTIFICATIONS_ENDPOINTS_BACKOFF: 1
     REGISTRY_HTTP_TLS_CERTIFICATE: /certs/registry.crt
     REGISTRY_HTTP_TLS_KEY: /certs/registry.key
     REGISTRY_HTTP_SECRET: httpsecret
@@ -72,36 +67,36 @@ registry:
         backoff: 1
   tty: true
   stdin_open: true
+  links:
+    - portus:portus
   volumes:
     - ${DIR}/certs:/certs:ro
     - ${DIR}/data:/var/lib/registry
-  links:
-    - portus:portus
 
-ssl-proxy:
+sslproxy:
   image: nginx:1.9.9
   tty: true
   stdin_open: true
   links:
-    - portus:portus
+  - portus:portus
   volumes:
-    - ${DIR}/certs:/etc/nginx/certs:ro
+  - ${DIR}/certs:/etc/nginx/certs:ro
   volumes_from:
-    - portus
+  - portus
 
 lb:
+  image: rancher/load-balancer-service
+  tty: true
+  stdin_open: true
   ports:
   - ${RPORT}:5000/tcp
   - ${PPORT}:443/tcp
   labels:
-    io.rancher.loadbalancer.target.ssl-proxy: ${PPORT}=443
+    io.rancher.loadbalancer.target.sslproxy: ${PPORT}=443
     io.rancher.loadbalancer.target.registry: ${RPORT}=5000
     io.rancher.scheduler.global: 'true'
     io.rancher.scheduler.affinity:host_label: ${LABEL}
-  tty: true
-  image: rancher/load-balancer-service
   links:
   - registry:registry
-  - ssl-proxy:ssl-proxy
-  stdin_open: true
+  - sslproxy:sslproxy
 
