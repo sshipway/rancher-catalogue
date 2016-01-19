@@ -21,13 +21,13 @@
       description: "Password for Portus database access, must be 8 characters or longer"
       required: true
       default: password
-      type: "string"
+      type: "password"
     - variable: "ROOTPASSWORD"
       label: "DB Root Password"
       description: "Root Password for MySQL database, must be 8 characters or longer.  This is not normally used."
       required: true
       default: password
-      type: "string"
+      type: "password"
     - variable: "DIR"
       label: "Storage directory"
       description: "Path of shared storage to use for registry, database, and certificates.  This should be available on all hosts"
@@ -89,7 +89,7 @@
       description: "The password to use for binding to the LDAP server (if LDAP authentication is being used with Bind enabled)"
       required: false
       default: "password"
-      type: "string"
+      type: "password"
     - variable: "LABEL"
       label: "LB Scheduling Rule"
       description: "The scheduling rule for where to run the Load Balancer.  The Registry and Web UI will be available on Hosts which match this Label test."
