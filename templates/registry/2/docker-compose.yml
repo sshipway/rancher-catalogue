@@ -9,11 +9,7 @@ db:
   stdin_open: true
   volumes:
   - ${DIR}/db:/var/lib/mysql
-  labels:
-    io.rancher.container.pull_image: always
 sslproxy:
-  labels:
-    io.rancher.container.pull_image: always
   image: nginx:1.9.9
   tty: true
   stdin_open: true
@@ -21,9 +17,7 @@ sslproxy:
   - portus:portus
   volumes:
   - ${DIR}/certs:/etc/nginx/certs:ro
-  volumes_from:
-  - portus
-  volume_driver: ''
+  - ${DIR}/proxy:/etc/nginx/conf.d:ro
 registry:
   image: registry:2.1
   environment:
@@ -49,8 +43,6 @@ registry:
   volumes:
   - ${DIR}/certs:/certs:ro
   - ${DIR}/data:/var/lib/registry
-  labels:
-    io.rancher.container.pull_image: always
 lb:
   image: rancher/load-balancer-service
   tty: true
@@ -100,8 +92,8 @@ portus:
   stdin_open: true
   volumes:
   - ${DIR}/certs:/certs
+  - ${DIR}/proxy:/etc/nginx/conf.d
   links:
   - db:db
   labels:
-    io.rancher.sidekicks: sslproxy
     io.rancher.container.pull_image: always
