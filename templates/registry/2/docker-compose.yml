@@ -8,9 +8,12 @@ db:
   tty: true
   stdin_open: true
   volumes:
-    - ${DIR}/db:/var/lib/mysql
-
+  - ${DIR}/db:/var/lib/mysql
+  labels:
+    io.rancher.container.pull_image: always
 sslproxy:
+  labels:
+    io.rancher.container.pull_image: always
   image: nginx:1.9.9
   tty: true
   stdin_open: true
@@ -19,10 +22,50 @@ sslproxy:
   volumes:
   - ${DIR}/certs:/etc/nginx/certs:ro
   volumes_from:
-  - portus:ro
+  - portus
+  volume_driver: ''
+registry:
+  image: registry:2.1
+  environment:
+    REGISTRY_LOG_LEVEL: warn
+    REGISTRY_STORAGE_DELETE_ENABLED: true
+    REGISTRY_AUTH_TOKEN_REALM: https://${DOMAIN}:${PPORT}/v2/token
+    REGISTRY_AUTH_TOKEN_SERVICE: ${DOMAIN}:${RPORT}
+    REGISTRY_AUTH_TOKEN_ISSUER: ${DOMAIN}
+    REGISTRY_AUTH_TOKEN_ROOTCERTBUNDLE: /certs/registry.crt
+    REGISTRY_HTTP_TLS_CERTIFICATE: /certs/registry.crt
+    REGISTRY_HTTP_TLS_KEY: /certs/registry.key
+    REGISTRY_HTTP_SECRET: httpsecret
+    REGISTRY_NOTIFICATIONS_ENDPOINTS: >
+      - name: portus
+        url: http://portus:3000/v2/webhooks/events
+        timeout: 500
+        threshold: 5
+        backoff: 1
+  tty: true
+  stdin_open: true
+  links:
+  - portus:portus
+  volumes:
+  - ${DIR}/certs:/certs:ro
+  - ${DIR}/data:/var/lib/registry
   labels:
     io.rancher.container.pull_image: always
-
+lb:
+  image: rancher/load-balancer-service
+  tty: true
+  stdin_open: true
+  ports:
+  - ${RPORT}:5000/tcp
+  - ${PPORT}:443/tcp
+  labels:
+    io.rancher.loadbalancer.target.sslproxy: ${PPORT}=443
+    io.rancher.loadbalancer.target.registry: ${RPORT}=5000
+    io.rancher.scheduler.global: 'true'
+    io.rancher.scheduler.affinity:host_label: ${LABEL}
+  links:
+  - registry:registry
+  - sslproxy:sslproxy
 portus:
   image: sshipway/portus:2.0.3
   environment: 
@@ -56,52 +99,9 @@ portus:
   tty: true
   stdin_open: true
   volumes:
-    - ${DIR}/certs:/certs
+  - ${DIR}/certs:/certs
   links:
-    - db:db
+  - db:db
   labels:
     io.rancher.sidekicks: sslproxy
     io.rancher.container.pull_image: always
-
-registry:
-  image: registry:2.1
-  environment:
-    REGISTRY_LOG_LEVEL: warn
-    REGISTRY_STORAGE_DELETE_ENABLED: true
-    REGISTRY_AUTH_TOKEN_REALM: https://${DOMAIN}:${PPORT}/v2/token
-    REGISTRY_AUTH_TOKEN_SERVICE: ${DOMAIN}:${RPORT}
-    REGISTRY_AUTH_TOKEN_ISSUER: ${DOMAIN}
-    REGISTRY_AUTH_TOKEN_ROOTCERTBUNDLE: /certs/registry.crt
-    REGISTRY_HTTP_TLS_CERTIFICATE: /certs/registry.crt
-    REGISTRY_HTTP_TLS_KEY: /certs/registry.key
-    REGISTRY_HTTP_SECRET: httpsecret
-    REGISTRY_NOTIFICATIONS_ENDPOINTS: >
-      - name: portus
-        url: http://portus:3000/v2/webhooks/events
-        timeout: 500
-        threshold: 5
-        backoff: 1
-  tty: true
-  stdin_open: true
-  links:
-    - portus:portus
-  volumes:
-    - ${DIR}/certs:/certs:ro
-    - ${DIR}/data:/var/lib/registry
-
-lb:
-  image: rancher/load-balancer-service
-  tty: true
-  stdin_open: true
-  ports:
-  - ${RPORT}:5000/tcp
-  - ${PPORT}:443/tcp
-  labels:
-    io.rancher.loadbalancer.target.sslproxy: ${PPORT}=443
-    io.rancher.loadbalancer.target.registry: ${RPORT}=5000
-    io.rancher.scheduler.global: 'true'
-    io.rancher.scheduler.affinity:host_label: ${LABEL}
-  links:
-  - registry:registry
-  - sslproxy:sslproxy
-
