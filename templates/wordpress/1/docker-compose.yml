@@ -1,0 +1,28 @@
+db:
+  environment:
+    MYSQL_ROOT_PASSWORD: ${PASSWORD}
+  tty: true
+  image: mariadb
+  stdin_open: true
+  volumes:
+  - ${VOLUME}:/var/lib/mysql
+balancer:
+  ports:
+  - ${PORT}:80
+  labels:
+    io.rancher.scheduler.global: 'true'
+    io.rancher.scheduler.affinity:host_label: lb=1
+  tty: true
+  image: rancher/load-balancer-service
+  links:
+  - wordpress:wordpress
+  stdin_open: true
+wordpress:
+  environment:
+    MYSQL_ROOT_PASSWORD: ${PASSWORD}
+  tty: true
+  image: wordpress
+  links:
+  - db:mysql
+  stdin_open: true
+
