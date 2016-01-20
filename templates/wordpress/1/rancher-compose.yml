@@ -28,6 +28,11 @@
       required: true
       type: "string"
       default: "wordpress"
+    - variable: "POOL"
+      label: "Storage pool"
+      description: "Name of Convoy storage pool, or blank for filesystem"
+      required: false
+      type: "string"
 db:
   scale: 1
 balancer:

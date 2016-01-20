@@ -6,6 +6,7 @@ db:
   stdin_open: true
   volumes:
   - ${VOLUME}:/var/lib/mysql
+  volume_driver: ${POOL}
 balancer:
   ports:
   - ${PORT}:80
