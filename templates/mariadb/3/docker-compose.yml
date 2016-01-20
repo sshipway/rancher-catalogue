@@ -1,0 +1,36 @@
+MariaDB:
+  environment:
+    MYSQL_ROOT_PASSWORD: ${ROOTPASS}
+    MYSQL_DATABASE: ${DB}
+    MYSQL_USER: ${USER}
+    MYSQL_PASS: ${PASS}
+    MYSQL_ALLOW_EMPTY_PASSWORD: no
+  tty: true
+  image: mariadb:10.1.10
+  stdin_open: true
+  volumes:
+    - /var/lib/mysql
+
+phpMyAdmin:
+  environment:
+    MYSQL_ROOT_PASSWORD: ${ROOTPASS}
+  tty: true
+  image: nazarpc/phpmyadmin
+  links:
+  - MariaDB:mysql
+  stdin_open: true
+
+LoadBalancer:
+  ports:
+  - ${PORT}:3306/tcp
+  - ${ADMINPORT}:80
+  labels:
+    io.rancher.loadbalancer.target.mysql: ${PORT}=3306
+    io.rancher.loadbalancer.target.phpmyadmin: ${ADMINPORT}=80
+  tty: true
+  image: rancher/load-balancer-service
+  links:
+  - phpMyAdmin:phpmyadmin
+  - MariaDB:mysql
+  stdin_open: true
+
