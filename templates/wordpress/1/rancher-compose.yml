@@ -20,7 +20,8 @@
       label: "Password"
       description: "Root password for Wordpress database"
       required: true
-      type: "string"
+      type: "password"
+      default: "password"
     - variable: "VOLUME"
       label: "Storage"
       description: "Persistent storage volume.  Either a filesystem path, or a Convoy volume name"
