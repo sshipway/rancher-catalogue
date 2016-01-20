@@ -40,8 +40,13 @@
       default: "password"
     - variable: "VOLUME"
       label: "Volume"
-      description: "Directory of Convoy volume name for mounting as storage"
+      description: "Directory or Convoy volume name for mounting as storage"
       required: true
+      type: "string"
+    - variable: "POOL"
+      label: "Storage Pool"
+      description: "Convoy storage pool, or blank for filesystem mount"
+      required: false
       type: "string"
 
 LoadBalancer:
