@@ -4,12 +4,6 @@
   description: "Wordpress server"
   uuid: wordpress-1
   questions: 
-    - variable: "SCALE"
-      label: "Scale"
-      description: "How many servers to run"
-      default: 2
-      required: true
-      type: "int"
     - variable: "PORT"
       label: "Port"
       description: "Which TCP port the load balancer should listen on"
@@ -38,5 +32,5 @@ db:
 balancer:
   load_balancer_config: {}
 wordpress:
-  scale: ${SCALE}
+  scale: 1
 

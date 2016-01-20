@@ -10,7 +10,6 @@ MariaDB:
   stdin_open: true
   volumes:
     - ${VOLUME}:/var/lib/mysql
-  volume_driver: ${POOL}
 
 phpMyAdmin:
   environment:
