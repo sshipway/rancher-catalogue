@@ -4,6 +4,17 @@ db:
   tty: true
   image: mariadb
   stdin_open: true
+  labels:
+  - io.rancher.sidekicks: db-data
+  volumes_from:
+  - db-data
+db-data:
+  image: mariadb
+  command: /bin/true
+  labels:
+  - io.rancher.container.start_once: true
+  volumes:
+  - /var/lib/mysql
 balancer:
   ports:
   - ${PORT}:80

@@ -1,6 +1,6 @@
 .catalog:
   name: "Wordpress"
-  version: "v1.0"
+  version: "v1.1"
   description: "Wordpress server"
   uuid: wordpress-0
   questions: 

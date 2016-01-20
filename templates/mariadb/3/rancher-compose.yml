@@ -2,7 +2,7 @@
   name: "MariaDB"
   version: "v10.1.10-1.3"
   description: "MariaDB database server"
-  uuid: mariadb-1
+  uuid: mariadb-3
   questions: 
     - variable: "PORT"
       label: "Port number"
