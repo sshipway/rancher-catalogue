@@ -10,7 +10,7 @@ ssl-proxy:
         ssl_certificate     certs/registry.crt;\n
         ssl_certificate_key certs/registry.key;\n
         location / {\n
-          proxy_set_header X-Forwarded-Host-A \$$http_host;\n
+          proxy_set_header X-Forwarded-Host-A \$http_host;\n
           proxy_set_header X-Forwarded-Host-B $$http_host;\n
           proxy_set_header X-Forwarded-Host-C $http_host;\n
         }\n
