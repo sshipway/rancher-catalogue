@@ -1,0 +1,20 @@
+# Start proxy first as this makes certificates if necessary
+ssl-proxy:
+  image: sshipway/nginx:1.9.9
+  tty: true
+  stdin_open: true
+  environment: 
+    NGINX_CONFIG: >
+      server {\n
+        listen 443 ssl;\n
+        ssl_certificate     certs/registry.crt;\n
+        ssl_certificate_key certs/registry.key;\n
+        location / {\n
+          proxy_set_header X-Forwarded-Host-A \$$http_host;\n
+          proxy_set_header X-Forwarded-Host-B $$http_host;\n
+          proxy_set_header X-Forwarded-Host-C $http_host;\n
+        }\n
+      }\n
+    NGINX_CERT_FILE: /etc/nginx/certs/registry.crt
+    NGINX_KEY_FILE: /etc/nginx/certs/registry.key
+

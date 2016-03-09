@@ -1,0 +1,5 @@
+name: Test
+description: |
+  Template syntax testing item
+version: v0.1
+category: applications

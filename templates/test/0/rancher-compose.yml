@@ -1,0 +1,13 @@
+.catalog:
+  name: "Test"
+  version: "v0.1"
+  description: "Test"
+  uuid: test-0
+  questions: 
+    - variable: "EXPAND"
+      label: "Text"
+      description: "Some text to add"
+      default: ""
+      required: false
+      type: "string"
+
